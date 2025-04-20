@@ -2,15 +2,12 @@ const express = require("express");
  const connectDb=require("./config/databse");
  const User=require("./models/user");
 const app = express();
-
+// express.json()is convert json to js object which we send dynamically 
+app.use(express.json());
 app.post("/signup",async(req,res)=>{
-    const user={
-        firstName:"Vishesh",
-        lastName:"Kumar",
-        email:"Vishesh@gmail.com",
-        password:"xyz@123",
-    }
-    const data=new User(user);
+    console.log(req.body)
+    // creating new instance of model
+    const data=new User(req.body);
     try{
         await data.save();
      res.send("user added to database")
