@@ -5,8 +5,10 @@ const { Model } = require("mongoose");
 const app = express();
 // express.json()is convert json to js object which we send dynamically 
 app.use(express.json());
+// GET user 
 app.get("/feed",async(req,res)=>{
-    const users= await User.find({})
+    console.log(req.body.email)
+    const users= await User.find({email:req.body.email})
     try{
         if(users.length!=0){
             res.send(users);
@@ -19,6 +21,7 @@ app.get("/feed",async(req,res)=>{
         res.status(404).send("something went wrong");
     }
 });
+// feed Api
 app.post("/signup",async(req,res)=>{
     console.log(req.body)
     // creating new instance of model
@@ -32,6 +35,31 @@ app.post("/signup",async(req,res)=>{
     }
     
 });
+// delete user from database 
+app.delete("/user",async(req,res)=>{
+    // here userId we manually copy from database _id
+    const userId=req.body.userId;
+    try{
+        await User.findByIdAndDelete(userId);
+        res.send("user deleted successfully!")
+    }
+    catch(err){
+        res.status(404).send("Something Went Wrong");
+    }
+})
+// UPDATE the user data in database 
+app.patch("/user",async(req,res)=>{
+    const userId=req.body.userId;
+    const data=req.body;
+    try{
+       const user= await User.findByIdAndUpdate(userId,data,{returnDocument:'before'});
+        console.log(user)
+        res.send("User updated successfully!")
+    }
+    catch(err){
+        res.status(404).send("Something went wrong");
+    }
+})
 
 
 
