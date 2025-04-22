@@ -1,79 +1,73 @@
-const express = require("express");
- const connectDb=require("./config/databse");
- const User=require("./models/user");
-const { Model } = require("mongoose");
-const app = express();
-// express.json()is convert json to js object which we send dynamically 
-app.use(express.json());
-// GET user 
-app.get("/feed",async(req,res)=>{
-    console.log(req.body.email)
-    const users= await User.find({email:req.body.email})
+const express=require("express");
+const ConnectDB=require("./config/databse");
+const User=require("./models/user");
+ const app=express();
+ app.use(express.json());
+ app.delete("/user",async(req,res)=>{
     try{
-        if(users.length!=0){
-            res.send(users);
-        }
-        else{
-            res.send("User is not found");
-        }
-    }
-    catch(err){
-        res.status(404).send("something went wrong");
-    }
-});
-// feed Api
-app.post("/signup",async(req,res)=>{
-    console.log(req.body)
-    // creating new instance of model
-    const data=new User(req.body);
-    try{
-        await data.save();
-     res.send("user added to database")
-    }
-    catch(err){
-        res.status(400).send("error in saving the data:"   + err.message);
-    }
-    
-});
-// delete user from database 
-app.delete("/user",async(req,res)=>{
-    // here userId we manually copy from database _id
-    const userId=req.body.userId;
-    try{
+        const userId=req.body.userId;
         await User.findByIdAndDelete(userId);
-        res.send("user deleted successfully!")
+        res.send("user is deleted Successfully!!");
+
     }
     catch(err){
-        res.status(404).send("Something Went Wrong");
+        res.send("User id not found");
     }
-})
-// UPDATE the user data in database 
-app.patch("/user",async(req,res)=>{
-    const userId=req.body.userId;
-    const data=req.body;
+ })
+ app.patch("/user/:userId",async(req,res)=>{
     try{
-       const user= await User.findByIdAndUpdate(userId,data,{returnDocument:'before',runValidators:true});
-        console.log(user)
-        res.send("User updated successfully!")
+        // we send userid in url becoz we don't want to update user id;
+        // if preson is not send userId in url then it work fine that's we use '?'
+        const userId=req.params?.userId;
+        // only some fields can be updated 
+        const ALLOWED_UPDATE=["skills","age","gender","password","about"];
+        const isAllowedUpdate=Object.keys(req.body).every((k)=>ALLOWED_UPDATE.includes(k));
+        if(!isAllowedUpdate){
+            throw new Error("NOT VALID UPDATE");
+        }
+        // if some attacker send millions of skills to polluted yours database 
+        // we apply sanitization to each and every field to prevent from attacker
+        if(req.body.skills?.length>10){
+            throw new Error("More than 10 skills is not allowed");
+        }
+        await User.findByIdAndUpdate(userId,req.body,{runValidators:true})
+        res.send("User is updated successfully!!")
     }
     catch(err){
-        res.status(404).send("Something went wrong"+err);
+        res.send("ERROR: " + err);
+    }
+ })
+ app.post("/signup",async(req,res)=>{
+    try{
+        console.log(req.body);
+       const data=new User(req.body);
+       await data.save();
+        res.send("data is store ");
+    }
+    catch(err){
+        res.status(404).send("Something went wrong");
+    }
+ })
+app.get("/feed",async(req,res)=>{
+    try{
+        const user=await User.find({});
+        res.status(200).send(user);
+    }
+    catch(err){
+        res.status(404).send("Something went wrong");
     }
 })
 
 
+ConnectDB().then(()=>{
+    try{
+        console.log("Database connecction is established");
+        app.listen(3000,()=>{console.log("server is on running on port 3000")});
+    }
+    catch(err){
+        console.log("Something went wrong ");
+    }
+})
 
-
-
-
-
-
-// this is good way of connecting the database 
-// becoz once database connection is establish then we run our server
-// mongoose.connect is asychronous task 
-connectDb().then(()=>{
-    console.log("Databse connection established.....")
-    app.listen(3000, console.log("server is running on port 3000"));
-}).catch((err)=>{console.log("some error is occured")});
 
 

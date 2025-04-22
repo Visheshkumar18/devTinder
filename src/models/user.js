@@ -1,48 +1,40 @@
-const mongoose=require("mongoose");
-// creating userschema
- const userSchema=new mongoose.Schema({
+const { Schema, default: mongoose } = require("mongoose");
+
+const UserSchema=new Schema({
     firstName:{
-        type:String,
-        required:true,
-    },
-    lastName: {
-        type: String
-    },
-    email :{
-        type: String,
-        required:true,
-        unique:true,
-        // trim remove space from email like "   abc@gmail.com     "
-        // our database understand this different email
-        trim:true
-    },
-    password:{
         type:String,
         required:true
     },
-    age:{
-        type:Number
+    lastName:{
+        type:String
     },
-    gender:{
+    email:{
         type:String,
-        // validate works when new user is created not work in patch ,or update 
-        // but we can work manually using option runValidators where we write patch and update api
-        validate(value){
-            if(!["male","female","others"].includes(value)){
-                throw new error("GENDER IS NOT VALID ")
-            }
-        }
+        unique:true,
+        trim:true,
+        required:true
+       
+    },
+    password:{
+        type:String,
+        required:true,
+    },
+    about:{
+        type:String,
+        default:"Hey, I'm using the Dev Tinder!"
     },
     skills:{
         type:[String]
     },
-    about:{
+    gender:{
         type:String,
-        default:"Hey, I am using dev tinder "
+         validate(value){
+            if(!["male","female","others"].includes(value)){
+                throw new Error("Gender is not valid");
+            }
+        }
+
     }
- },{timestamps:true});
-//  exporting model
-module.exports=mongoose.model("User",userSchema);
-// or
-// const User=mongoose.model("user",userSchema);
-// moule.exports=User;
+},{timestamps:true})
+
+module.exports=mongoose.model("User",UserSchema);
