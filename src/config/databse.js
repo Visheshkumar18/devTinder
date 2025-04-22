@@ -1,8 +1,15 @@
-const mongoose=require("mongoose");
- 
-const connectDb=async()=>{
+const mongoose = require("mongoose");
 
- await mongoose.connect("mongodb+srv://vk2256087:pEkaxPyVRtvLyHkB@cluster0.bmfrlwo.mongodb.net/devTinder")
-}
-module.exports=connectDb;
+const connectDb = async () => {
+  try {
+    await mongoose.connect("mongodb+srv://vk2256087:vishesh123@cluster0.uwsaw7m.mongodb.net/devTinder");
+    console.log("MongoDB connected successfully!");
+  } catch (error) {
+    console.error("MongoDB connection failed:", error.message);
+    process.exit(1); 
+  }
+};
 
+
+
+module.exports = connectDb;
