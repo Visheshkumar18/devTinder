@@ -1,6 +1,7 @@
 const express=require("express");
 const ConnectDB=require("./config/databse");
 const User=require("./models/user");
+const bcrypt=require("bcrypt");
  const app=express();
  app.use(express.json());
  app.delete("/user",async(req,res)=>{
@@ -40,7 +41,16 @@ const User=require("./models/user");
  app.post("/signup",async(req,res)=>{
     try{
         console.log(req.body);
-       const data=new User(req.body);
+        // step1: validate the user data you can write a validate function at api level but validate at database level
+          
+        const{firstName, lastName,password,email,skills,about,age,gender}=req.body;
+        console.log(firstName,lastName,password,email);
+        const encryptedPassword=await bcrypt.hash(password,10);
+
+        const data=new User({firstName,lastName,password:encryptedPassword,email,skills,about,age,gender});
+
+        // this is not correct way to create user 
+    //    const data=new User(req.body);
        await data.save();
         res.send("data is store ");
     }
@@ -55,6 +65,31 @@ app.get("/feed",async(req,res)=>{
     }
     catch(err){
         res.status(404).send("Something went wrong");
+    }
+})
+
+app.get("/login",async(req,res)=>{
+    try{
+        const{email,password}=req.body;
+    if(!email || !password){
+        throw Error("enter the email and password");
+    }
+    const user=await User.findOne({email});
+    if(!user){
+       throw new Error("Invaild credentials!!");
+    }
+   const isMatch=await bcrypt.compare(password,user.password);
+    if(isMatch){
+        res.send("logIn Successfully!!!!");
+    }
+    // never enter these message Enter correct password its is data leaking 
+    // instead use invalid creditials
+    else{
+        res.send("Invaild credentials!!");
+    }
+    }
+    catch(err){
+        res.send("ERROR: "+err.message);
     }
 })
 

@@ -3,10 +3,13 @@ const validator = require("validator");
 const UserSchema=new Schema({
     firstName:{
         type:String,
-        required:true
+        required:true,
+        minLength:4,
+        maxLength:50,
     },
     lastName:{
-        type:String
+        type:String,
+        minLength:1,
     },
     email:{
         type:String,
@@ -32,7 +35,8 @@ const UserSchema=new Schema({
     },
     about:{
         type:String,
-        default:"Hey, I'm using the Dev Tinder!"
+        default:"Hey, I'm using the Dev Tinder!",
+        maxLength:30,
     },
     skills:{
         type:[String]
