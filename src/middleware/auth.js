@@ -1,14 +1,24 @@
-const auth=(req,res,next)=>{
-    console.log("authorisation is checking");
-    const token ="xyz";
-    const isAuthorised =token==="xyz";
-    if(!isAuthorised){
+const jwt = require("jsonwebtoken");
+const User=require("../models/user")
 
-        res.status(404).send("unauthorised request");
+const auth = async (req, res, next) => {
+    try {
+        const { token } = req.cookies;
+
+        if (!token) {
+            return res.status(401).send("Access denied. No token provided.");
+        }
+            console.log("authorisation")
+            const  decoded = jwt.verify(token, "DEV@12$hello"); 
+            // console.log("decoded message"+decoded._id);
+            const user = await User.findById(decoded._id);
+            // console.log("user "+user);
+            req.user=user;
+            next();
+    } 
+    catch (err) {
+        return res.status(401).send("Invalid or expired token.");
     }
-    else{
-        console.log("you are authorised , welcome ")
-        next();
-    }
-}
-module.exports={auth}
+};
+
+module.exports = { auth };
