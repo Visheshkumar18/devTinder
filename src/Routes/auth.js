@@ -48,6 +48,10 @@ authRouter.get("/login",async(req,res)=>{
             res.send("ERROR: "+err.message);
         }
 })
+authRouter.get("/logout",async(req,res)=>{
+    res.clearCookie("token");
+    res.send("Logout Successfully !!!");
+})
 
 
 
