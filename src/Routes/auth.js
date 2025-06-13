@@ -7,7 +7,7 @@ const authRouter=express.Router();
 authRouter.post("/signup",async(req,res)=>{
     try{
             const{firstName, lastName,password,email,skills,about,age,gender}=req.body;
-            console.log(firstName,lastName,password,email);
+            // console.log(firstName,lastName,password,email);
             const encryptedPassword=await bcrypt.hash(password,10);
             const data=new User({firstName,lastName,password:encryptedPassword,email,skills,about,age,gender});
             await data.save();

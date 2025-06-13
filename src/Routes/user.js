@@ -45,9 +45,14 @@ userRouter.get("/user/connection",auth,async(req,res)=>{
         res.status(404).send("ERROR:"+err.message);2
     }
 })
-// feed api
+// feed api 
+// /add pagenation at each api call 10 user comes from database 
 userRouter.get("/feed",auth,async(req,res)=>{
     const loggedInUser=req.user;
+    const page=parseInt(req.query.page)||1;
+    let limit=parseInt(req.query.limit)||10;
+    limit=limit>50?50:limit;
+    const skip=(page-1)*limit;
     // extracting all request that logged in user either send or received
     const connectionRequest=await ConnectionRequest.find({
        $or:[{ fromUserId:loggedInUser._id},
@@ -60,7 +65,7 @@ userRouter.get("/feed",auth,async(req,res)=>{
         hideConnectionRequest.add(req.toUserId);
     });
     const user=await User.find({$and:[{_id:{$nin:Array.from(hideConnectionRequest)}},
-       {_id: {$ne:loggedInUser._id}}]}).select("firstName lastName about skills");
+       {_id: {$ne:loggedInUser._id}}]}).select("firstName lastName about skills").skip(skip).limit(limit);
         res.send(user);
 })
 module.exports=userRouter;
