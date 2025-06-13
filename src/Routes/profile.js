@@ -6,7 +6,7 @@ const profileRouter = express.Router();
 
 // Corrected: validation function for allowed updates
 const isValidUpdate = (body) => {
-    const allowedUpdates = ["firstName", "lastName", "skills", "About"];
+    const allowedUpdates = ["firstName", "lastName", "skills", "about"];
     return Object.keys(body).every((key) => allowedUpdates.includes(key));
 };
 

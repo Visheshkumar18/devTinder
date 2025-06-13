@@ -2,6 +2,7 @@ const express=require("express");
 const userRouter=express.Router();
 const {auth}=require("../middleware/auth");
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
 const   USER_SAVE_DATA=["firstName","lastName","about","skills"];
 // friend request received list
 userRouter.get("/user/request/received",auth,async(req,res)=>{
@@ -43,5 +44,23 @@ userRouter.get("/user/connection",auth,async(req,res)=>{
     catch(err){
         res.status(404).send("ERROR:"+err.message);2
     }
+})
+// feed api
+userRouter.get("/feed",auth,async(req,res)=>{
+    const loggedInUser=req.user;
+    // extracting all request that logged in user either send or received
+    const connectionRequest=await ConnectionRequest.find({
+       $or:[{ fromUserId:loggedInUser._id},
+        {toUserId:loggedInUser._id}]
+    });
+    // creating a set that store unique (sent + received request)
+    const hideConnectionRequest=new Set();
+    connectionRequest.forEach((req)=>{
+        hideConnectionRequest.add(req.fromUserId);
+        hideConnectionRequest.add(req.toUserId);
+    });
+    const user=await User.find({$and:[{_id:{$nin:Array.from(hideConnectionRequest)}},
+       {_id: {$ne:loggedInUser._id}}]}).select("firstName lastName about skills");
+        res.send(user);
 })
 module.exports=userRouter;
