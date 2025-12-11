@@ -11,7 +11,10 @@ const cors = require("cors");
 const app = express();
 //  express.json middleware is used to converst json to javascript object
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin:'http://localhost:5173',
+  credentials:true
+}));
 //  cookie parser is used to read cookies at different routes
 app.use(cookieParser());
 app.use("/", authRouter);

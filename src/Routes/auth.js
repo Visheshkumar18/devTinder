@@ -6,26 +6,45 @@ const jwt = require("jsonwebtoken");
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { firstName, lastName, password, email, skills, about, age, gender } =
-      req.body;
-    // console.log(firstName,lastName,password,email);
+    const { 
+      firstName, 
+      lastName, 
+      password, 
+      email, 
+      skills, 
+      about, 
+      age, 
+      gender,
+      photoUrl 
+    } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).send("Email and password are required");
+    }
+
     const encryptedPassword = await bcrypt.hash(password, 10);
-    const data = new User({
+
+    const user = new User({
       firstName,
       lastName,
       password: encryptedPassword,
       email,
+      photoUrl,
       skills,
       about,
       age,
       gender,
     });
-    await data.save();
-    res.send("data is store ");
+
+    await user.save();
+    res.send("User created successfully");
+
   } catch (err) {
-    res.status(404).send("Something went wrong");
+    console.error(err);
+    res.status(500).send("Something went wrong");
   }
 });
+
 authRouter.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -42,6 +61,7 @@ authRouter.post("/login", async (req, res) => {
       const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY);
       // sending token to the user
       res.cookie("token", token);
+      const loggedInUser=user;
       res.send(user);
     }
     // never enter these message Enter correct password its is data leaking

@@ -24,6 +24,14 @@ const UserSchema = new Schema(
         }
       },
     },
+    age:{
+      type:String,
+      validator(value){
+        if(!validator.isInt(value) && value<0){
+          throw new Error("Enter valid age"+value);
+        }
+      }
+    },
     password: {
       type: String,
       required: true,
@@ -32,6 +40,10 @@ const UserSchema = new Schema(
           throw new Error("Enter a strong password: " + value);
         }
       },
+    },
+    photoUrl:{
+      type:String,
+      default:"https://www.freepik.com/free-vector/smiling-young-man-illustration_356306451.htm#fromView=keyword&page=1&position=4&uuid=3fd1a490-0d01-4d0e-8dd2-c23cf6afa444&query=Default+avatar"
     },
     about: {
       type: String,
