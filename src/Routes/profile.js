@@ -6,7 +6,7 @@ const profileRouter = express.Router();
 
 // Corrected: validation function for allowed updates
 const isValidUpdate = (body) => {
-  const allowedUpdates = ["firstName", "lastName", "skills", "about"];
+  const allowedUpdates = ["firstName", "lastName", "skills", "about","age","photoUrl","gender"];
   return Object.keys(body).every((key) => allowedUpdates.includes(key));
 };
 
@@ -40,7 +40,7 @@ profileRouter.patch("/profile/edit", auth, async (req, res) => {
     await user.save();
     res.json({ message: "Profile updated successfully", user });
   } catch (err) {
-    res.status(400).send("ERROR: " + err.message);
+    res.status(400).json({message :`${err.message}`});
   }
 });
 

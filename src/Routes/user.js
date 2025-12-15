@@ -3,7 +3,7 @@ const userRouter = express.Router();
 const { auth } = require("../middleware/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
-const USER_SAVE_DATA = ["firstName", "lastName", "about", "skills"];
+const USER_SAVE_DATA = ["firstName", "lastName", "about", "skills","photoUrl","gender","age"];
 // friend request received list
 userRouter.get("/user/request/received", auth, async (req, res) => {
   try {
@@ -40,7 +40,7 @@ userRouter.get("/user/connection", auth, async (req, res) => {
       }
       return row.fromUserId;
     });
-    res.json({ mesage: "your connection is :", data });
+    res.json({ message: "your connections are :", data });
   } catch (err) {
     res.status(404).send("ERROR:" + err.message);
     2;

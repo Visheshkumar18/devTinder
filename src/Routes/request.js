@@ -14,6 +14,7 @@ requestRouter.post(
       const fromUserId = req.user._id;
       const toUserId = req.params.toUserId;
       const status = req.params.status;
+  
 
       // 1 -> Validate the status
       const isAllowedStatus = ["interested", "ignore"];

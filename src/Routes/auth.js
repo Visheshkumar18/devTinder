@@ -5,6 +5,7 @@ const { auth } = require("../middleware/auth");
 const jwt = require("jsonwebtoken");
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
+  console.log(req.body);
   try {
     const { 
       firstName, 

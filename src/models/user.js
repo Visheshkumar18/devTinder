@@ -48,7 +48,7 @@ const UserSchema = new Schema(
     about: {
       type: String,
       default: "Hey, I'm using the Dev Tinder!",
-      maxLength: 30,
+       maxLength: 1000,
     },
     skills: {
       type: [String],
