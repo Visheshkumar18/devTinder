@@ -85,7 +85,6 @@ requestRouter.post(
           .status(404)
           .json({ message: "This status is not allowed!!" });
       }
-      console.log(req.user._id);
       const connectionRequest = await ConnectionRequest.findOne({
         _id: requestId,
         toUserId: loggedInUser,
