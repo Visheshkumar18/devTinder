@@ -6,16 +6,16 @@ const jwt = require("jsonwebtoken");
 const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
   try {
-    const { 
-      firstName, 
-      lastName, 
-      password, 
-      email, 
-      skills, 
-      about, 
-      age, 
+    const {
+      firstName,
+      lastName,
+      password,
+      email,
+      skills,
+      about,
+      age,
       gender,
-      photoUrl 
+      photoUrl,
     } = req.body;
 
     if (!email || !password) {
@@ -38,7 +38,6 @@ authRouter.post("/signup", async (req, res) => {
 
     await user.save();
     res.send("User created successfully");
-
   } catch (err) {
     console.error(err);
     res.status(500).send("Something went wrong");
@@ -60,8 +59,12 @@ authRouter.post("/login", async (req, res) => {
       // create a token
       const token = jwt.sign({ _id: user._id }, process.env.SECRET_KEY);
       // sending token to the user
-      res.cookie("token", token);
-      const loggedInUser=user;
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "None",
+      });
+      const loggedInUser = user;
       res.send(user);
     }
     // never enter these message Enter correct password its is data leaking
