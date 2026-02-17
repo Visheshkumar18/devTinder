@@ -18,15 +18,15 @@ initializeSocket(server);
 //  express.json middleware is used to converst json to javascript object
 app.use(express.json());
 app.use(cors({
-  origin:'https://dev-tinder-frontend-lime.vercel.app',
+  origin:process.env.FRONTEND_URL,
   credentials:true
 }));
 //  cookie parser is used to read cookies at different routes
 app.use(cookieParser());
-app.use("/", authRouter);
-app.use("/", profileRouter);
-app.use("/", requestRouter);
-app.use("/", userRouter);
+app.use('/', authRouter);
+app.use('/', profileRouter);
+app.use('/', requestRouter);
+app.use('/', userRouter);
 app.use('/',paymentRouter);
 app.use('/',chatRouter);
 

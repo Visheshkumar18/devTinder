@@ -7,7 +7,7 @@ const initializeSocket=(server)=>{
   }
     const io=socket(server,{
       cors:{
-      origin:"https://dev-tinder-frontend-lime.vercel.app",
+      origin:process.env.FRONTEND_URL,
       credentials: true
     }
     });
