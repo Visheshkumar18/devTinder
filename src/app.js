@@ -6,10 +6,15 @@ const profileRouter = require("./Routes/profile");
 const requestRouter = require("./Routes/request");
 const userRouter = require("./Routes/user");
 const paymentRouter = require("./Routes/payment");
+const http=require('http');
+const initializeSocket=require('./utils/socket')
 const dotenv=require('dotenv')
 dotenv.config()
 const cors = require("cors");
+const chatRouter = require("./Routes/chat");
 const app = express();
+const server=http.createServer(app);
+initializeSocket(server);
 //  express.json middleware is used to converst json to javascript object
 app.use(express.json());
 app.use(cors({
@@ -22,12 +27,13 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
-app.use('/',paymentRouter)
+app.use('/',paymentRouter);
+app.use('/',chatRouter);
 
 ConnectDB().then(() => {
   try {
     console.log("Database connection is established");
-    app.listen(3000, () => {
+    server.listen(3000, () => {
       console.log("server is on running on port 3000");
     });
   } catch (err) {
