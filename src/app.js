@@ -32,8 +32,9 @@ app.use('/',chatRouter);
 
 ConnectDB().then(() => {
   try {
+    const PORT=process.env.PORT || 3000;
     console.log("Database connection is established");
-    server.listen(3000, () => {
+    server.listen(PORT, () => {
       console.log("server is on running on port 3000");
     });
   } catch (err) {
