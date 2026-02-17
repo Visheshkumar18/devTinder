@@ -18,7 +18,7 @@ initializeSocket(server);
 //  express.json middleware is used to converst json to javascript object
 app.use(express.json());
 app.use(cors({
-  origin:'http://localhost:5173',
+  origin:'https://dev-tinder-frontend-lime.vercel.app',
   credentials:true
 }));
 //  cookie parser is used to read cookies at different routes
