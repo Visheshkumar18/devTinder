@@ -22,7 +22,7 @@ const initializeSocket=(server)=>{
         const room=getSecretRoomId(userId,targetUserId);
         // save message to the database 
         try {
-          const chat=await Chat.findOne({participants:{$all:[userId,targetUserId]}});
+          let chat=await Chat.findOne({participants:{$all:[userId,targetUserId]}});
           if(!chat){
             chat=new Chat({
               participants:[userId,targetUserId],
